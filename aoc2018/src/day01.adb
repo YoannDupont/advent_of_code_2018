@@ -20,9 +20,8 @@ procedure Day01 is
       Source => Integer,
       Target => Ada.Containers.Hash_Type
    );
-   -- Creates a hash value from an integer.
-   -- It is not guaranteed that Integer and Hash_Type types have the same size,
-   -- as those are implementation defined.
+   -- Creates a hash value from integers.
+   -- Supposes that integers and Hash_Type have the same size.
 
    package Integer_Sets is new Ada.Containers.Hashed_Sets
    (
@@ -38,6 +37,9 @@ procedure Day01 is
       -- Using an accumulator allows to generate arbitrary length arrays.
       function Read_Input_Rec(input : in Ada.Text_IO.File_Type; acc : in Integer_Array) return Integer_Array is
       begin
+         -- The stop condition.
+         -- Not using End_Of_File will make the compiler issue a warning, which
+         -- can prevent you from running the code if -Werror flag is enabled.
          if Ada.Text_IO.End_Of_File(input) then
             return acc;
          else
@@ -50,7 +52,7 @@ procedure Day01 is
       end Read_Input_Rec;
 
       F : Ada.Text_IO.File_Type;
-      acc : Integer_Array(1 .. 0) := (others => 0);
+      acc : Integer_Array(1 .. 0);
    begin
       Ada.Text_IO.Open
       (
@@ -65,7 +67,7 @@ procedure Day01 is
          return result;
       end;
    end Read_Input;
-   
+
    function Part_1(input : in Integer_Array) return Integer is
       resulting_frequency : Integer := 0;
    begin
@@ -74,7 +76,7 @@ procedure Day01 is
       end loop;
       return resulting_frequency;
    end Part_1;
-   
+
    function Part_2(input : in Integer_Array) return Integer is
       set : Integer_Sets.Set;
       position : Integer_Sets.Cursor;
@@ -94,6 +96,7 @@ procedure Day01 is
    end Part_2;
 
    input : constant Integer_Array := Read_Input("input/day01.txt");
+   -- the variable containing the input data for day 1
 begin
    Ada.Text_IO.Put_Line("Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?");
    Ada.Text_IO.Put_Line(Integer'Image(Part_1(input)));
